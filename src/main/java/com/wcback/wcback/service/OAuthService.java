@@ -15,11 +15,11 @@ import java.util.HashMap;
 public class OAuthService {
     @Value("${kakao.apiKey}")
     private String api_Key;
-
     @Value("${kakao.callbackURL}")
     private String callback_URL;
-
-    public String getKakaoAccessToken(String code) {
+    
+    // AccessToken 발급
+    public String getKakaoAccessToken (String code) {
 
         String access_Token = "";
         String refresh_Token = "";
@@ -63,8 +63,8 @@ public class OAuthService {
             access_Token = element.getAsJsonObject().get("access_token").getAsString();
             refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
 
-            //System.out.println("access_token : " + access_Token);
-            //System.out.println("refresh_token : " + refresh_Token);
+            System.out.println("access_token : " + access_Token);
+            System.out.println("refresh_token : " + refresh_Token);
 
             br.close();
             bw.close();
@@ -74,7 +74,8 @@ public class OAuthService {
 
         return access_Token;
     }
-
+    
+    // 유저정보 가져오기
     public HashMap<String, Object> getUserInfo(String access_Token) {
 
         //    요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
@@ -105,17 +106,21 @@ public class OAuthService {
 
             JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
             JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
+            //JsonObject profile = element.getAsJsonObject().get("profile").getAsJsonObject();
 
             String nickname = properties.getAsJsonObject().get("nickname").getAsString();
             String email = kakao_account.getAsJsonObject().get("email").getAsString();
+            String profile_image = properties.getAsJsonObject().get("thumbnail_image").getAsString();
 
-            userInfo.put("nickname", nickname);
+            userInfo.put("userName", nickname);
             userInfo.put("email", email);
-
+            userInfo.put("profile_image", profile_image);
+            //System.out.println(element);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return userInfo;
     }
+
 }
