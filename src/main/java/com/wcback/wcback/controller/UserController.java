@@ -5,6 +5,7 @@ import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
 import com.wcback.wcback.exception.user.PassWordErrorException;
 import com.wcback.wcback.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,18 +53,11 @@ public class UserController {
         return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
     }
 
-    /*// 회원정보 수정
-    @PostMapping("/update")
-    private ResponseEntity<Object> Update(@RequestBody UserDto.UserRequestDto data) {
-        User newUser = userService.register(data);
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setCode("200");
-        responseDto.setData(newUser);
-        responseDto.setMessage("수정되었습니다.");
-        return ResponseEntity.ok()
-                //.headers() JWT  토큰
-                .body(responseDto);
-    }*/
+     //회원정보 수정
+    @PatchMapping("/modify")
+    private ResponseEntity<Object> Modify(@RequestBody UserDto.UserRequestDto data) {
+        return new ResponseEntity<>(userService.modify(data), HttpStatus.OK);
+    }
 
 }
 

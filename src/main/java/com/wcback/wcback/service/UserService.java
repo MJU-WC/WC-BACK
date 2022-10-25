@@ -5,11 +5,11 @@ import com.wcback.wcback.data.entity.User;
 import com.wcback.wcback.data.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -41,17 +41,27 @@ public class UserService {
     }
 
     // 회원가입
-    public User register(UserDto.UserRequestDto userRequestDto) {
+    @Transactional
+    public User register(UserDto.UserRequestDto userRequest) {
         User user = new User();
-        BeanUtils.copyProperties(userRequestDto, user);
+        BeanUtils.copyProperties(userRequest, user);
         return userRepository.save(user);
     }
 
     // DB에 존재하는 토큰 바꾸기
+    @Transactional
     public void updateToken(Long id, String token) {
         User user = findUserById(id);
         user.setAccessToken(token);
         userRepository.save(user);
+    }
+
+    // 회원정보 수정
+    @Transactional
+    public User modify(UserDto.UserRequestDto userRequest) {
+        User originUser = userRepository.findByEmail(userRequest.getEmail()).get();
+        BeanUtils.copyProperties(userRequest, originUser);
+        return userRepository.save(originUser);
     }
 
 }
