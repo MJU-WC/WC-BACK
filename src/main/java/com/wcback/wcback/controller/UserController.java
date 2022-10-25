@@ -5,24 +5,24 @@ import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
 import com.wcback.wcback.exception.user.PassWordErrorException;
 import com.wcback.wcback.service.UserService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService, JwtProvider jwtProvider) {
+    public UserController(UserService userService, JwtProvider jwtProvider, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtProvider = jwtProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 유저 닉네임 중복 체크
@@ -34,6 +34,7 @@ public class UserController {
     // 회원가입
     @PostMapping("/register")
     private ResponseEntity<Object> Register(@RequestBody UserDto.UserRequestDto data) {
+        data.setPassword(passwordEncoder.encode(data.getPassword()));
         return new ResponseEntity<>(userService.register(data),HttpStatus.CREATED);
     }
 
@@ -41,7 +42,7 @@ public class UserController {
     @GetMapping("/login")
     public ResponseEntity<Object> Login(@RequestBody UserDto.UserRequestDto data) {
         User loginUser = userService.findUserByEmail(data.getEmail());
-        if (!Objects.equals(loginUser.getPassword(),data.getPassword())) {
+        if (!passwordEncoder.matches(data.getPassword(),loginUser.getPassword())) {
             throw new PassWordErrorException("잘못된 비밀번호입니다.");
         }
         String token = jwtProvider.createToken(loginUser.getEmail());
@@ -56,6 +57,7 @@ public class UserController {
      //회원정보 수정
     @PatchMapping("/modify")
     private ResponseEntity<Object> Modify(@RequestBody UserDto.UserRequestDto data) {
+        data.setPassword(passwordEncoder.encode(data.getPassword()));
         return new ResponseEntity<>(userService.modify(data), HttpStatus.OK);
     }
 
