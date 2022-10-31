@@ -6,6 +6,7 @@ import com.wcback.wcback.data.entity.User;
 import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.service.OAuthService;
 import com.wcback.wcback.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,17 +16,11 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class OAuthConroller {
     private final OAuthService oAuth;
     private final UserService userService;
     private final JwtProvider jwtProvider;
-    @Autowired
-    public OAuthConroller(OAuthService oAuthService, UserService userService, JwtProvider jwtProvider) {
-
-        this.oAuth = oAuthService;
-        this.userService = userService;
-        this.jwtProvider = jwtProvider;
-    }
 
     HttpHeaders header = new HttpHeaders();
     // 카카오 로그인 + 회원가입

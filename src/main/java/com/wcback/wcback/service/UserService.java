@@ -4,6 +4,7 @@ import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
 import com.wcback.wcback.data.repository.UserRepository;
 import com.wcback.wcback.exception.user.AlreadyExistException;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,13 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.NoSuchElementException;
 
 @Service
+@AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     // 이메일 중복 체크
     @Transactional(readOnly = true)

@@ -6,6 +6,7 @@ import com.wcback.wcback.data.entity.User;
 import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.exception.user.PassWordErrorException;
 import com.wcback.wcback.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +17,11 @@ import java.util.DuplicateFormatFlagsException;
 
 @RestController
 @RequestMapping("/user")
+@AllArgsConstructor
 public class UserController {
     private final UserService userService;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public UserController(UserService userService, JwtProvider jwtProvider, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.jwtProvider = jwtProvider;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     // 유저 닉네임 중복 체크
     @GetMapping("/checkEmail/{email}")
