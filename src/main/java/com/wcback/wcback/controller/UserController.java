@@ -3,6 +3,7 @@ package com.wcback.wcback.controller;
 import com.wcback.wcback.config.JwtProvider;
 import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
+import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.exception.user.PassWordErrorException;
 import com.wcback.wcback.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.DuplicateFormatFlagsException;
 
 @RestController
 @RequestMapping("/user")
@@ -33,7 +36,7 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/register")
-    private ResponseEntity<Object> Register(@RequestBody UserDto.UserRequestDto data) {
+    private ResponseEntity<Object> Register(@RequestBody UserDto.UserRequestDto data) throws AlreadyExistException {
         data.setPassword(passwordEncoder.encode(data.getPassword()));
         return new ResponseEntity<>(userService.register(data),HttpStatus.CREATED);
     }
@@ -46,7 +49,7 @@ public class UserController {
             throw new PassWordErrorException("잘못된 비밀번호입니다.");
         }
         String token = jwtProvider.createToken(loginUser.getEmail());
-        userService.updateToken(loginUser.getId(), token);
+        userService.updateToken(loginUser.getEmail(), token);
 
         UserDto.UserInfoDto userInfoDto = new UserDto.UserInfoDto();
         userInfoDto.setUserName(loginUser.getUserName());

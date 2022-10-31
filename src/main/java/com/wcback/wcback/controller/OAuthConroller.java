@@ -3,6 +3,7 @@ package com.wcback.wcback.controller;
 import com.wcback.wcback.config.JwtProvider;
 import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
+import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.service.OAuthService;
 import com.wcback.wcback.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class OAuthConroller {
     // 카카오 로그인 + 회원가입
     @ResponseBody
     @GetMapping("/kakao/callback")
-    public ResponseEntity<Object> kakaoCallback(@RequestParam String code){
+    public ResponseEntity<Object> kakaoCallback(@RequestParam String code) throws AlreadyExistException {
 
         String token = oAuth.getKakaoAccessToken(code);
         HashMap<String ,Object> userInfo = oAuth.getUserInfo(token);
@@ -48,7 +49,7 @@ public class OAuthConroller {
         // 로그인 처리
         User loginUser = userService.findUserByEmail(email);
         String JwtToken = jwtProvider.createToken(email);
-        userService.updateToken(loginUser.getId(), JwtToken);
+        userService.updateToken(loginUser.getEmail(), JwtToken);
 
         UserDto.UserInfoDto userInfoDto = new UserDto.UserInfoDto();
         userInfoDto.setUserName(loginUser.getUserName());

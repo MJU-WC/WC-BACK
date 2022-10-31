@@ -18,11 +18,11 @@ public class PasswordEncoderTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // 패스워트 암호화 테스트
     @Test
     @DisplayName("패스워드 암호화 테스트")
     void setPasswordEncoder() {
         String password = "1234";
-
         String encodedPassword = passwordEncoder.encode(password);
 
         assertAll(

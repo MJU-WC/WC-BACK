@@ -14,10 +14,11 @@ public class UserDto {
     @NoArgsConstructor
     public static class UserRequestDto {
         private String email;
-        private String password;
         private String userName;
+        private String password;
         private String profile_image;
-        private String address;
+        private Long lat;
+        private Long lng;
     }
 
     @Data
@@ -25,12 +26,13 @@ public class UserDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserInfoDto {
-        private String id;
-        private String userName;
         private String email;
+        private String userName;
         private String password;
         private String profile_image;
-        private String address;
+        private Long lat;
+        private Long lng;
         private String token;
     }
+
 }

@@ -3,13 +3,13 @@ package com.wcback.wcback.service;
 import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
 import com.wcback.wcback.data.repository.UserRepository;
+import com.wcback.wcback.exception.user.AlreadyExistException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -33,16 +33,12 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchElementException("가입되지 않은 이메일입니다."));
     }
 
-    //ID로 유저 정보 조회
-    @Transactional(readOnly = true)
-    public User findUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 아이디입니다."));
-    }
-
     // 회원가입
     @Transactional
-    public User register(UserDto.UserRequestDto userRequest) {
+    public User register(UserDto.UserRequestDto userRequest) throws AlreadyExistException {
+        if (checkUser(userRequest.getEmail())) {
+            throw new AlreadyExistException("이미 존재하는 이메일입니다.");
+        }
         User user = new User();
         BeanUtils.copyProperties(userRequest, user);
         return userRepository.save(user);
@@ -50,8 +46,8 @@ public class UserService {
 
     // DB에 존재하는 토큰 바꾸기
     @Transactional
-    public void updateToken(Long id, String token) {
-        User user = findUserById(id);
+    public void updateToken (String email, String token) {
+        User user = findUserByEmail(email);
         user.setAccessToken(token);
         userRepository.save(user);
     }
