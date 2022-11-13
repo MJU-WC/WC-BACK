@@ -7,13 +7,11 @@ import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.exception.user.PassWordErrorException;
 import com.wcback.wcback.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.DuplicateFormatFlagsException;
 
 @RestController
 @RequestMapping("/user")
@@ -40,15 +38,18 @@ public class UserController {
     @GetMapping("/login")
     public ResponseEntity<Object> Login(@RequestBody UserDto.UserRequestDto data) {
         User loginUser = userService.findUserByEmail(data.getEmail());
+
         if (!passwordEncoder.matches(data.getPassword(),loginUser.getPassword())) {
             throw new PassWordErrorException("잘못된 비밀번호입니다.");
         }
+
         String token = jwtProvider.createToken(loginUser.getEmail());
         userService.updateToken(loginUser.getEmail(), token);
 
         UserDto.UserInfoDto userInfoDto = new UserDto.UserInfoDto();
         userInfoDto.setUserName(loginUser.getUserName());
         userInfoDto.setToken(token);
+
         return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
     }
 

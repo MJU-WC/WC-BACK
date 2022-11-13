@@ -1,10 +1,8 @@
 package com.wcback.wcback.data.entity;
 
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Builder
@@ -26,7 +24,7 @@ public class User {
     private Long lat;
 
     @Column(nullable = false)
-    private Long lng;
+    private Long lon;
 
     @Column(nullable = true)
     private String password;

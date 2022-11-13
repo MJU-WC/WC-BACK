@@ -18,7 +18,7 @@ public class UserDto {
         private String password;
         private String profile_image;
         private Long lat;
-        private Long lng;
+        private Long lon;
     }
 
     @Data
@@ -31,7 +31,7 @@ public class UserDto {
         private String password;
         private String profile_image;
         private Long lat;
-        private Long lng;
+        private Long lon;
         private String token;
     }
 

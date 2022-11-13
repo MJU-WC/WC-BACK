@@ -7,8 +7,6 @@ import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.service.OAuthService;
 import com.wcback.wcback.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +20,6 @@ public class OAuthConroller {
     private final UserService userService;
     private final JwtProvider jwtProvider;
 
-    HttpHeaders header = new HttpHeaders();
     // 카카오 로그인 + 회원가입
     @ResponseBody
     @GetMapping("/kakao/callback")

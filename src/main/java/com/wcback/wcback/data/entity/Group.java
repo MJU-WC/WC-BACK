@@ -1,5 +1,3 @@
-/*
-
 package com.wcback.wcback.data.entity;
 
 import lombok.*;
@@ -12,12 +10,13 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "group")
+@Table(name = "groupId")
 public class Group {
     @Id
     @Column(unique = true, nullable = false)
-    private String groupName;
+    private String groupId;
 
+    @Column(nullable = false)
+    private String email;
 }
 
-*/

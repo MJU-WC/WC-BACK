@@ -1,25 +1,33 @@
-/*
-
 package com.wcback.wcback.controller;
 
+import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.service.GroupService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/group")
-@AllArgsConstructer
+@AllArgsConstructor
 public class GroupController {
     private final GroupService groupService;
 
     // 그룹 생성
-    @PostMapping("/create")
-    public ResponseEntity<Object> createGroup() {
-        return null;
+    @PostMapping("/createGroup")
+    public ResponseEntity<Object> createGroup(@RequestBody String groupName, @RequestBody List<String> members) throws AlreadyExistException {
+        if (groupService.checkGroup(groupName)) {
+            throw new AlreadyExistException("이미 존재하는 그룹명입니다.");
+        }
+        return ResponseEntity.ok().body(groupService.loopMembers(groupName, members));
+    }
+
+    // 그룹 삭제
+    @DeleteMapping("deleteGroup")
+    public ResponseEntity<Object> deleteGroup(@RequestParam String groupName) {
+        groupService.deleteById(groupName);
+        return ResponseEntity.ok().body("삭제 완료");
     }
 }
 
-*/
