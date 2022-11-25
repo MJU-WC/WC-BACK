@@ -1,6 +1,7 @@
 package com.wcback.wcback.service;
 
 import com.wcback.wcback.data.entity.Group;
+import com.wcback.wcback.data.entity.GroupPK;
 import com.wcback.wcback.data.repository.GroupRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ public class GroupService {
     GroupRepository groupRepository;
 
     // 멤버마다 그룹에 넣기
-    public Group loopMembers(String groupName, List<String> members, String leaderName) {
+    public List<Group> loopMembers(String groupName, String[] members, String leaderName) {
         for (String member : members) {createGroup(member,groupName, leaderName);}
         return findById(groupName);
     }
@@ -30,8 +31,8 @@ public class GroupService {
     }
     
     // 그룹Id로 그룹 찾기
-    public Group findById(String groupName) {
-        return groupRepository.findById(groupName).get();
+    public List<Group> findById(String groupName) {
+        return groupRepository.findByGroupid(groupName);
     }
 
     // 그룹Id 중복체크
@@ -41,7 +42,7 @@ public class GroupService {
 
     // 그룹 삭제
     public void deleteById(String groupName) {
-        groupRepository.deleteById(groupName);
+        groupRepository.deleteByGroupid(groupName);
     }
 
 }

@@ -1,9 +1,15 @@
 package com.wcback.wcback.data.repository;
 
 import com.wcback.wcback.data.entity.Group;
+import com.wcback.wcback.data.entity.GroupPK;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface GroupRepository extends JpaRepository<Group,Object> {
+import java.util.List;
+
+public interface GroupRepository extends JpaRepository<Group, GroupPK> {
     boolean existsByGroupid(String groupid);
+    void deleteByGroupid(String groupid);
+
+    List<Group> findByGroupid(String groupName);
 }
 
