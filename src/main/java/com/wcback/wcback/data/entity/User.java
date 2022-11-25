@@ -1,6 +1,7 @@
 package com.wcback.wcback.data.entity;
 
 import lombok.*;
+import org.hibernate.type.BigIntegerType;
 
 import javax.persistence.*;
 
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "user")
+@Table(name = "client")
 public class User {
 
     @Id
@@ -18,21 +19,24 @@ public class User {
     private String email;
 
     @Column(length = 15, nullable = false)
-    private String userName;
+    private String name;
 
     @Column(nullable = false)
-    private Long lat;
+    private float lat;
 
     @Column(nullable = false)
-    private Long lon;
+    private float lon;
 
-    @Column(nullable = true)
-    private String password;
+    @Column
+    private String pwd;
 
-    @Column(nullable = true)
+    @Column
     private String profile_image;
 
     @Column
-    private String accessToken = "";
+    private String token = "";
+
+    @Column(nullable = false)
+    private boolean iskakao;
 
 }

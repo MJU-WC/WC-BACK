@@ -10,13 +10,20 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "groupId")
+@Table(name = "groupid")
+@IdClass(GroupPK.class)
 public class Group {
+
     @Id
     @Column(unique = true, nullable = false)
-    private String groupId;
+    private String groupid;
 
+    @Id
     @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private Boolean leader = false;
+
 }
 

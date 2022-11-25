@@ -12,26 +12,27 @@ public class UserDto {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserRequestDto {
+    public static class UserRegisterDto {
         private String email;
-        private String userName;
-        private String password;
+        private String name;
+        private String pwd;
         private String profile_image;
-        private Long lat;
-        private Long lon;
+        private float lat;
+        private float lon;
+        private boolean iskakao = false;
     }
 
     @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserInfoDto {
+    public static class UserLoginDto {
         private String email;
-        private String userName;
-        private String password;
+        private String name;
+        private String pwd;
         private String profile_image;
-        private Long lat;
-        private Long lon;
+        private float lat;
+        private float lon;
         private String token;
     }
 

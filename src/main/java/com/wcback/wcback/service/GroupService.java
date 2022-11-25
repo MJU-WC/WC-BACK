@@ -1,4 +1,3 @@
-
 package com.wcback.wcback.service;
 
 import com.wcback.wcback.data.entity.Group;
@@ -14,16 +13,19 @@ public class GroupService {
     GroupRepository groupRepository;
 
     // 멤버마다 그룹에 넣기
-    public Group loopMembers(String groupName, List<String> members) {
-        for (String member : members) {createGroup(member,groupName);}
+    public Group loopMembers(String groupName, List<String> members, String leaderName) {
+        for (String member : members) {createGroup(member,groupName, leaderName);}
         return findById(groupName);
     }
 
-    // 한 멤버씩 그룹에 넣기
-    public void createGroup(String member,String groupName) {
+    // 멤버를 그룹에 넣기
+    public void createGroup(String member,String groupName, String leaderName) {
         Group group = new Group();
-        group.setGroupId(groupName);
+        group.setGroupid(groupName);
         group.setEmail(member);
+        if (member.equals(leaderName)) {
+            group.setLeader(true);
+        }
         groupRepository.save(group);
     }
     
@@ -34,7 +36,7 @@ public class GroupService {
 
     // 그룹Id 중복체크
     public boolean checkGroup(String groupName) {
-        return groupRepository.existsByGroupId(groupName);
+        return groupRepository.existsByGroupid(groupName);
     }
 
     // 그룹 삭제

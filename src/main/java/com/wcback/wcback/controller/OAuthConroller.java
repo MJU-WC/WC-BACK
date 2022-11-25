@@ -31,10 +31,11 @@ public class OAuthConroller {
 
         // 아직 가입되지 않은 이메일은 먼저 회원가입 처리
         if(!userService.checkUser(email)) {
-            UserDto.UserRequestDto userRequestDto = new UserDto.UserRequestDto();
-            userRequestDto.setUserName(userInfo.get("userName").toString());
+            UserDto.UserRegisterDto userRequestDto = new UserDto.UserRegisterDto();
+            userRequestDto.setName(userInfo.get("userName").toString());
             userRequestDto.setEmail(userInfo.get("email").toString());
             userRequestDto.setProfile_image(userInfo.get("profile_image").toString());
+            userRequestDto.setIskakao(true);
             userService.register(userRequestDto);
         }
 
@@ -43,8 +44,8 @@ public class OAuthConroller {
         String JwtToken = jwtProvider.createToken(email);
         userService.updateToken(loginUser.getEmail(), JwtToken);
 
-        UserDto.UserInfoDto userInfoDto = new UserDto.UserInfoDto();
-        userInfoDto.setUserName(loginUser.getUserName());
+        UserDto.UserLoginDto userInfoDto = new UserDto.UserLoginDto();
+        userInfoDto.setName(loginUser.getName());
         userInfoDto.setToken(token);
         return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
     };

@@ -31,7 +31,7 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public User register(UserDto.UserRequestDto userRequest) throws AlreadyExistException {
+    public User register(UserDto.UserRegisterDto userRequest) throws AlreadyExistException {
         if (checkUser(userRequest.getEmail())) {
             throw new AlreadyExistException("이미 존재하는 이메일입니다.");
         }
@@ -44,13 +44,13 @@ public class UserService {
     @Transactional
     public void updateToken (String email, String token) {
         User user = findUserByEmail(email);
-        user.setAccessToken(token);
+        user.setToken(token);
         userRepository.save(user);
     }
 
     // 회원정보 수정
     @Transactional
-    public User modify(UserDto.UserRequestDto userRequest) {
+    public User modify(UserDto.UserRegisterDto userRequest) {
         User originUser = userRepository.findByEmail(userRequest.getEmail()).get();
         BeanUtils.copyProperties(userRequest, originUser);
         return userRepository.save(originUser);
