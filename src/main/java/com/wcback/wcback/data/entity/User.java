@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Setter
 @Table(name = "client")
 public class User {
-
     @Id
     @Column(unique = true, length = 30, nullable = false)
     private String email;

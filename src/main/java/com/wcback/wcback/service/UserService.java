@@ -17,20 +17,17 @@ public class UserService {
     private final UserRepository userRepository;
 
     // 이메일 중복 체크
-    @Transactional(readOnly = true)
     public boolean checkUser(String email) {
         return userRepository.existsByEmail(email);
     }
 
     // 이메일로 유저 찾기
-    @Transactional(readOnly = true)
     public User findUserByEmail(String email) throws NoSuchElementException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NoSuchElementException("가입되지 않은 이메일입니다."));
     }
 
     // 회원가입
-    @Transactional
     public User register(UserDto.UserRegisterDto userRequest) throws AlreadyExistException {
         if (checkUser(userRequest.getEmail())) {
             throw new AlreadyExistException("이미 존재하는 이메일입니다.");
@@ -41,7 +38,6 @@ public class UserService {
     }
 
     // DB에 존재하는 토큰 바꾸기
-    @Transactional
     public void updateToken (String email, String token) {
         User user = findUserByEmail(email);
         user.setToken(token);
@@ -49,11 +45,15 @@ public class UserService {
     }
 
     // 회원정보 수정
-    @Transactional
     public User modify(UserDto.UserRegisterDto userRequest) {
         User originUser = userRepository.findByEmail(userRequest.getEmail()).get();
         BeanUtils.copyProperties(userRequest, originUser);
         return userRepository.save(originUser);
+    }
+
+    // 회원 탈퇴
+    public void deleteUser(String email) {
+        userRepository.deleteByEmail(email);
     }
 
 }

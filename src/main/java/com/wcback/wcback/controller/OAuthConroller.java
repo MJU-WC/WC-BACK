@@ -47,6 +47,6 @@ public class OAuthConroller {
         UserDto.UserLoginDto userInfoDto = new UserDto.UserLoginDto();
         userInfoDto.setName(loginUser.getName());
         userInfoDto.setToken(token);
-        return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+        return ResponseEntity.ok().body(userInfoDto);
     };
 }

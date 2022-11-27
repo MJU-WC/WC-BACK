@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,25 +23,27 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
     // 유저 닉네임 중복 체크
+    @Transactional(readOnly = true)
     @GetMapping("/checkEmail/{email}")
     public ResponseEntity<Object> checkEmail(@PathVariable String email) {
         return ResponseEntity.ok(userService.checkUser(email));
     }
 
     // 회원가입
+    @Transactional
     @PostMapping("/register")
-    private ResponseEntity<Object> Register(@RequestBody UserDto.UserRegisterDto data) throws AlreadyExistException {
+    public ResponseEntity<Object> Register(@RequestBody UserDto.UserRegisterDto data) throws AlreadyExistException {
         data.setPwd(passwordEncoder.encode(data.getPwd()));
-        System.out.println(data.getLat());
-        return new ResponseEntity<>(userService.register(data),HttpStatus.CREATED);
+        return ResponseEntity.ok().body(userService.register(data));
     }
 
     // 로그인
+    @Transactional(readOnly = true)
     @GetMapping("/login")
     public ResponseEntity<Object> Login(@RequestBody UserDto.UserRegisterDto data) {
         User loginUser = userService.findUserByEmail(data.getEmail());
 
-        if (!passwordEncoder.matches(data.getPwd(),loginUser.getPwd())) {
+        if (!passwordEncoder.matches(data.getPwd(), loginUser.getPwd())) {
             throw new PassWordErrorException("잘못된 비밀번호입니다.");
         }
 
@@ -51,15 +54,21 @@ public class UserController {
         userInfoDto.setName(loginUser.getName());
         userInfoDto.setToken(token);
 
-        return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+        return ResponseEntity.ok().body(userInfoDto);
     }
 
-     //회원정보 수정
+    //회원정보 수정
+    @Transactional
     @PatchMapping("/modify")
-    private ResponseEntity<Object> Modify(@RequestBody UserDto.UserRegisterDto data) {
+    public ResponseEntity<Object> Modify(@RequestBody UserDto.UserRegisterDto data) {
         data.setPwd(passwordEncoder.encode(data.getPwd()));
-        return new ResponseEntity<>(userService.modify(data), HttpStatus.OK);
+        return ResponseEntity.ok().body(userService.modify(data));
     }
-
+    @Transactional
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<Object> Withdraw(@RequestBody UserDto.UserRegisterDto data) {
+        userService.deleteUser(data.getEmail());
+        return ResponseEntity.ok().body("탈퇴완료");
+    }
 }
 
