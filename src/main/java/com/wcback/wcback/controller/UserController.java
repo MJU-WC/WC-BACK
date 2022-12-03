@@ -7,7 +7,6 @@ import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.exception.user.PassWordErrorException;
 import com.wcback.wcback.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,28 +32,36 @@ public class UserController {
     @Transactional
     @PostMapping("/register")
     public ResponseEntity<Object> Register(@RequestBody UserDto.UserRegisterDto data) throws AlreadyExistException {
-        data.setPwd(passwordEncoder.encode(data.getPwd()));
-        return ResponseEntity.ok().body(userService.register(data));
+        try {
+            data.setPwd(passwordEncoder.encode(data.getPwd()));
+            data.setToken(jwtProvider.createToken(data.getEmail()));
+            return ResponseEntity.ok().body(userService.register(data));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // 로그인
     @Transactional(readOnly = true)
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Object> Login(@RequestBody UserDto.UserRegisterDto data) {
-        User loginUser = userService.findUserByEmail(data.getEmail());
+        try {
+            User loginUser = userService.findUserByEmail(data.getEmail());
+            if (!passwordEncoder.matches(data.getPwd(), loginUser.getPwd())) {
+                throw new PassWordErrorException("잘못된 비밀번호입니다.");
+            }
 
-        if (!passwordEncoder.matches(data.getPwd(), loginUser.getPwd())) {
-            throw new PassWordErrorException("잘못된 비밀번호입니다.");
+            String token = jwtProvider.createToken(loginUser.getEmail());
+            userService.updateToken(loginUser.getEmail(), token);
+
+            UserDto.UserLoginDto userInfoDto = new UserDto.UserLoginDto();
+            userInfoDto.setName(loginUser.getName());
+            userInfoDto.setToken(token);
+
+            return ResponseEntity.ok().body(userInfoDto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        String token = jwtProvider.createToken(loginUser.getEmail());
-        userService.updateToken(loginUser.getEmail(), token);
-
-        UserDto.UserLoginDto userInfoDto = new UserDto.UserLoginDto();
-        userInfoDto.setName(loginUser.getName());
-        userInfoDto.setToken(token);
-
-        return ResponseEntity.ok().body(userInfoDto);
     }
 
     //회원정보 수정
@@ -64,11 +71,22 @@ public class UserController {
         data.setPwd(passwordEncoder.encode(data.getPwd()));
         return ResponseEntity.ok().body(userService.modify(data));
     }
+
+    // 회원탈퇴
     @Transactional
     @DeleteMapping("/withdraw")
     public ResponseEntity<Object> Withdraw(@RequestBody UserDto.UserRegisterDto data) {
         userService.deleteUser(data.getEmail());
         return ResponseEntity.ok().body("탈퇴완료");
     }
+
+    // 토큰으로 회원정보 가져오기
+    @Transactional
+    @PostMapping("getUser")
+    public ResponseEntity<Object> getUser(@RequestBody UserDto.UserLoginDto data) {
+        User user = userService.findUserByEmail(jwtProvider.getPayload(data.getToken()));
+        return ResponseEntity.ok().body(user);
+    }
+
 }
 

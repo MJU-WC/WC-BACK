@@ -20,6 +20,7 @@ public class UserDto {
         private float lat;
         private float lon;
         private boolean iskakao = false;
+        private String token;
     }
 
     @Data

@@ -1,7 +1,6 @@
 package com.wcback.wcback.service;
 
 import com.wcback.wcback.data.entity.Group;
-import com.wcback.wcback.data.entity.GroupPK;
 import com.wcback.wcback.data.repository.GroupRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

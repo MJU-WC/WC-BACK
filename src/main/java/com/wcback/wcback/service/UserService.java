@@ -7,7 +7,6 @@ import com.wcback.wcback.exception.user.AlreadyExistException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
@@ -55,5 +54,6 @@ public class UserService {
     public void deleteUser(String email) {
         userRepository.deleteByEmail(email);
     }
+
 
 }

@@ -1,22 +1,19 @@
 package com.wcback.wcback.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtProvider {
-
     @Value("${jwt.password}")
     private String secretKey;
-
     // 토큰 생성 메서드
     public String createToken(String subject) {
         Date now = new Date();
@@ -39,6 +36,18 @@ public class JwtProvider {
                 .parseClaimsJws(userToken)
                 .getBody();
     }
+
+    public String getPayload(String token) {
+        String[] chunks = token.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
+        return payload.split("sub")[1]
+                .replaceAll("\"","")
+                .replaceAll(":","")
+                .replaceAll("}","");
+    }
+
 
     private static String BearerRemove(String token) {
         return token.substring("Bearer ".length());

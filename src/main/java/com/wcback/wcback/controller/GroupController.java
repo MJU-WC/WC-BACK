@@ -1,7 +1,6 @@
 package com.wcback.wcback.controller;
 
 import com.wcback.wcback.data.dto.Group.GroupDto;
-import com.wcback.wcback.data.entity.Group;
 import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.service.GroupService;
 import lombok.AllArgsConstructor;
@@ -9,18 +8,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.List;
-
 @RestController
 @RequestMapping("/group")
 @AllArgsConstructor
 public class GroupController {
     private final GroupService groupService;
 
+    // 그룹 조회
     @Transactional
     @GetMapping
-    public ResponseEntity<Object> getGroup(@RequestParam String groupid) {
+    public ResponseEntity<Object> getGroup(@RequestParam String groupid) throws AlreadyExistException{
+        if (!groupService.checkGroup(groupid)) {
+            throw new AlreadyExistException("존재하지 않는 그룹입니다.");
+        }
         return ResponseEntity.ok().body(groupService.findById(groupid));
     }
 
@@ -44,6 +44,8 @@ public class GroupController {
         groupService.deleteById(groupName);
         return ResponseEntity.ok().body("그룹 삭제 완료");
     }
-
+    
+    
+    // 그룹 탈퇴
 }
 

@@ -33,7 +33,7 @@ public class User {
     private String profile_image;
 
     @Column
-    private String token = "";
+    private String token;
 
     @Column(nullable = false)
     private boolean iskakao;
