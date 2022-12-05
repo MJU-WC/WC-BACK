@@ -44,5 +44,9 @@ public class GroupService {
         groupRepository.deleteByGroupid(groupName);
     }
 
+    // 그룹탈퇴
+    public void groupOut(String groupName, String email) {
+        groupRepository.deleteByGroupidAndEmail(groupName,email);
+    }
 }
 

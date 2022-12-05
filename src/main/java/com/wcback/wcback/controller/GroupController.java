@@ -44,8 +44,14 @@ public class GroupController {
         groupService.deleteById(groupName);
         return ResponseEntity.ok().body("그룹 삭제 완료");
     }
-    
-    
+
+
     // 그룹 탈퇴
+    @Transactional
+    @DeleteMapping("/groupOut")
+    public ResponseEntity<Object> GroupOut(@RequestParam String groupName, String email) {
+        groupService.groupOut(groupName,email);
+        return ResponseEntity.ok().body("탈퇴 완료");
+    }
 }
 

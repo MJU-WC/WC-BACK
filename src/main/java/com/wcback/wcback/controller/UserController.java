@@ -5,6 +5,7 @@ import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
 import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.exception.user.PassWordErrorException;
+import com.wcback.wcback.service.OAuthService;
 import com.wcback.wcback.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -82,11 +83,17 @@ public class UserController {
 
     // 토큰으로 회원정보 가져오기
     @Transactional
-    @PostMapping("getUser")
+    @PostMapping("/getUser")
     public ResponseEntity<Object> getUser(@RequestBody UserDto.UserLoginDto data) {
         User user = userService.findUserByEmail(jwtProvider.getPayload(data.getToken()));
         return ResponseEntity.ok().body(user);
     }
 
+    @Transactional
+    @PostMapping("/getUserByKakaoToken")
+    public ResponseEntity<Object> getUserByKakaoToken(@RequestBody String token) {
+        OAuthService oAuthService = new OAuthService();
+        return ResponseEntity.ok().body(oAuthService.getUserInfo(token));
+    }
 }
 

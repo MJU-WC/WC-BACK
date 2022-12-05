@@ -7,9 +7,15 @@ import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.service.OAuthService;
 import com.wcback.wcback.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 import java.util.HashMap;
 
 @RestController
@@ -23,7 +29,7 @@ public class OAuthConroller {
     // 카카오 로그인 + 회원가입
     @ResponseBody
     @GetMapping("/kakao/callback")
-    public ResponseEntity<Object> kakaoCallback(@RequestParam String code) throws AlreadyExistException {
+    public ResponseEntity<Object> kakaoCallback(@RequestParam String code, HttpServletResponse response) throws AlreadyExistException {
 
         String token = oAuth.getKakaoAccessToken(code);
         HashMap<String ,Object> userInfo = oAuth.getUserInfo(token);
@@ -47,6 +53,13 @@ public class OAuthConroller {
         UserDto.UserLoginDto userInfoDto = new UserDto.UserLoginDto();
         userInfoDto.setName(loginUser.getName());
         userInfoDto.setToken(token);
-        return ResponseEntity.ok().body(userInfoDto);
+        System.out.println(userInfoDto);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("http://localhost:63342/frontend/HTML/main.html"));
+        headers.set("kakao-token",token);
+        Cookie cookie = new Cookie("kakao-token", token);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return ResponseEntity.status(HttpStatus.SEE_OTHER).headers(headers).build();
     };
 }

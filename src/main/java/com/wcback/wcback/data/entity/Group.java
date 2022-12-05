@@ -14,7 +14,7 @@ import javax.persistence.*;
 @IdClass(GroupPK.class)
 public class Group {
     @Id
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String groupid;
 
     @Id
