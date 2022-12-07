@@ -20,5 +20,6 @@ public class ScheduleDto {
         float lon;
         float lat;
         String Weather;
+        String address;
     }
 }

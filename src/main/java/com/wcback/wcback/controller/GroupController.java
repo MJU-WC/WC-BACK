@@ -1,8 +1,11 @@
 package com.wcback.wcback.controller;
 
+import com.wcback.wcback.config.JwtProvider;
 import com.wcback.wcback.data.dto.Group.GroupDto;
 import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.service.GroupService;
+import com.wcback.wcback.service.OAuthService;
+import com.wcback.wcback.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 @AllArgsConstructor
 public class GroupController {
     private final GroupService groupService;
+    private final OAuthService oAuthService;
+    private final UserService userService;
+    private final JwtProvider jwtProvider;
 
     // 그룹 조회
     @Transactional
@@ -52,6 +58,16 @@ public class GroupController {
     public ResponseEntity<Object> GroupOut(@RequestParam String groupName, String email) {
         groupService.groupOut(groupName,email);
         return ResponseEntity.ok().body("탈퇴 완료");
+    }
+
+    // 유저가 속한 그룹들 모두 찾기
+    @Transactional
+    @PostMapping("/getGroupsContainUser")
+    public ResponseEntity<Object> getGroupsContainUser(@RequestBody GroupDto.GroupFindiDto groupFindDto) {
+        String email = (groupFindDto.isKakao())
+                ? oAuthService.getUserInfo(groupFindDto.getToken()).get("email").toString()
+                : jwtProvider.getPayload(groupFindDto.getToken());
+        return ResponseEntity.ok().body(groupService.findGroupsContainUser(email));
     }
 }
 

@@ -21,21 +21,19 @@ public class Schedule {
     @Column(nullable = false)
     private String scheduleName;
 
-    @Column(nullable = true)
     private String email;
 
-    @Column(nullable = true)
     private String groupID;
 
     @Column(nullable = false)
     private Date appointment;
 
-    @Column(nullable = false)
     private float lon;
 
-    @Column(nullable = false)
     private float lat;
 
-    @Column(nullable = true)
     private String weather;
+
+    @Column(nullable = false)
+    private String address;
 }

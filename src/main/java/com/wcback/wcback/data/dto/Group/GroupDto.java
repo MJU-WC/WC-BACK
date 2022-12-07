@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
 
 public class GroupDto {
     @Data
@@ -13,9 +12,18 @@ public class GroupDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GroupRegisterDto {
-        String groupid;
-        String[] members;
-        String leaderName;
+        private String groupid;
+        private String[] members;
+        private String leaderName;
     }
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GroupFindiDto {
+        private String token;
+        private boolean isKakao;
+    }
+
 }
 

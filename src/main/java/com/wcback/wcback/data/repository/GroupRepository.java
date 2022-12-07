@@ -12,5 +12,7 @@ public interface GroupRepository extends JpaRepository<Group, GroupPK> {
     List<Group> findByGroupid(String groupName);
 
     void deleteByGroupidAndEmail(String groupName, String email);
+
+    List<Group> findGroupByEmail(String email);
 }
 

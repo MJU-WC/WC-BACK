@@ -3,7 +3,6 @@ package com.wcback.wcback.controller;
 import com.wcback.wcback.config.JwtProvider;
 import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
-import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.exception.user.PassWordErrorException;
 import com.wcback.wcback.service.OAuthService;
 import com.wcback.wcback.service.UserService;
@@ -21,6 +20,7 @@ public class UserController {
     private final UserService userService;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private OAuthService oAuthService;
 
     // 유저 닉네임 중복 체크
     @Transactional(readOnly = true)
@@ -32,7 +32,7 @@ public class UserController {
     // 회원가입
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<Object> Register(@RequestBody UserDto.UserRegisterDto data) throws AlreadyExistException {
+    public ResponseEntity<Object> Register(@RequestBody UserDto.UserRegisterDto data) {
         try {
             data.setPwd(passwordEncoder.encode(data.getPwd()));
             data.setToken(jwtProvider.createToken(data.getEmail()));
@@ -76,24 +76,33 @@ public class UserController {
     // 회원탈퇴
     @Transactional
     @DeleteMapping("/withdraw")
-    public ResponseEntity<Object> Withdraw(@RequestBody UserDto.UserRegisterDto data) {
-        userService.deleteUser(data.getEmail());
+    public ResponseEntity<Object> Withdraw(String token) {
+        String email = getEmailByJwtToken(token);
+        userService.deleteUser(email);
         return ResponseEntity.ok().body("탈퇴완료");
     }
 
     // 토큰으로 회원정보 가져오기
     @Transactional
     @PostMapping("/getUser")
-    public ResponseEntity<Object> getUser(@RequestBody UserDto.UserLoginDto data) {
-        User user = userService.findUserByEmail(jwtProvider.getPayload(data.getToken()));
+    public ResponseEntity<Object> getUser(String token) {
+        User user = userService.findUserByEmail(getEmailByJwtToken(token));
         return ResponseEntity.ok().body(user);
     }
-
+    
+    // 카카오토큰으로 회원정보 가져오기
     @Transactional
     @PostMapping("/getUserByKakaoToken")
     public ResponseEntity<Object> getUserByKakaoToken(@RequestBody String token) {
-        OAuthService oAuthService = new OAuthService();
         return ResponseEntity.ok().body(oAuthService.getUserInfo(token));
+    }
+
+    public String getEmailByJwtToken(String token) {
+        return jwtProvider.getPayload(token);
+    }
+
+    public String getEmailByKakaoToken(String token) {
+        return oAuthService.getUserInfo(token).get("email").toString();
     }
 }
 

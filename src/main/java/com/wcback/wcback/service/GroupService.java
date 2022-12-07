@@ -5,6 +5,7 @@ import com.wcback.wcback.data.repository.GroupRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,6 +48,15 @@ public class GroupService {
     // 그룹탈퇴
     public void groupOut(String groupName, String email) {
         groupRepository.deleteByGroupidAndEmail(groupName,email);
+    }
+
+    public List<String> findGroupsContainUser(String email) {
+        List<Group> groups = groupRepository.findGroupByEmail(email);
+        List<String> groupids = new ArrayList<>();
+        for (Group group : groups) {
+            groupids.add(group.getGroupid());
+        }
+        return groupids;
     }
 }
 

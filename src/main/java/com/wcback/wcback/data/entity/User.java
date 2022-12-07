@@ -1,7 +1,6 @@
 package com.wcback.wcback.data.entity;
 
 import lombok.*;
-import org.hibernate.type.BigIntegerType;
 
 import javax.persistence.*;
 
@@ -20,10 +19,8 @@ public class User {
     @Column(length = 15, nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private float lat;
 
-    @Column(nullable = false)
     private float lon;
 
     @Column
@@ -37,5 +34,8 @@ public class User {
 
     @Column(nullable = false)
     private boolean iskakao;
+
+    @Column
+    private String address;
 
 }
