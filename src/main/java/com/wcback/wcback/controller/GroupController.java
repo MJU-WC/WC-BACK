@@ -23,24 +23,32 @@ public class GroupController {
     // 그룹 조회
     @Transactional
     @GetMapping
-    public ResponseEntity<Object> getGroup(@RequestParam String groupid) throws AlreadyExistException{
-        if (!groupService.checkGroup(groupid)) {
-            throw new AlreadyExistException("존재하지 않는 그룹입니다.");
+    public ResponseEntity<Object> getGroup(@RequestParam String groupid){
+        try {
+            if (!groupService.checkGroup(groupid)) {
+                throw new AlreadyExistException("존재하지 않는 그룹입니다.");
+            }
+            return ResponseEntity.ok().body(groupService.findById(groupid));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok().body(groupService.findById(groupid));
     }
 
     // 그룹 생성
     @Transactional
     @PostMapping
-    public ResponseEntity<Object> createGroup(@RequestBody GroupDto.GroupRegisterDto groupRegisterDto) throws AlreadyExistException {
+    public ResponseEntity<Object> createGroup(@RequestBody GroupDto.GroupRegisterDto groupRegisterDto) {
         String groupid = groupRegisterDto.getGroupid();
         String[] members = groupRegisterDto.getMembers();
         String leaderName = groupRegisterDto.getLeaderName();
-        if (groupService.checkGroup(groupid)) {
-            throw new AlreadyExistException("이미 존재하는 그룹명입니다.");
+        try {
+            if (groupService.checkGroup(groupid)) {
+                throw new AlreadyExistException("이미 존재하는 그룹명입니다.");
+            }
+            return ResponseEntity.ok().body(groupService.loopMembers(groupid, members, leaderName));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok().body(groupService.loopMembers(groupid, members, leaderName));
     }
 
     // 그룹 삭제

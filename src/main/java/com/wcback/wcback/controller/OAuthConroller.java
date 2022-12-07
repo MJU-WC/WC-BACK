@@ -28,7 +28,7 @@ public class OAuthConroller {
     // 카카오 로그인 + 회원가입
     @ResponseBody
     @GetMapping("/kakao/callback")
-    public ResponseEntity<Object> kakaoCallback(@RequestParam String code, HttpServletResponse response) throws AlreadyExistException {
+    public ResponseEntity<Object> kakaoCallback(@RequestParam String code, HttpServletResponse response) {
 
         String token = oAuth.getKakaoAccessToken(code);
         HashMap<String ,Object> userInfo = oAuth.getUserInfo(token);
@@ -41,7 +41,11 @@ public class OAuthConroller {
             userRequestDto.setEmail(userInfo.get("email").toString());
             userRequestDto.setProfile_image(userInfo.get("profile_image").toString());
             userRequestDto.setIskakao(true);
-            userService.register(userRequestDto);
+            try {
+                userService.register(userRequestDto);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
 
         // 로그인 처리

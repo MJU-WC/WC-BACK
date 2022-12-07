@@ -3,6 +3,7 @@ package com.wcback.wcback.controller;
 import com.wcback.wcback.config.JwtProvider;
 import com.wcback.wcback.data.dto.User.UserDto;
 import com.wcback.wcback.data.entity.User;
+import com.wcback.wcback.exception.user.AlreadyExistException;
 import com.wcback.wcback.exception.user.PassWordErrorException;
 import com.wcback.wcback.service.OAuthService;
 import com.wcback.wcback.service.UserService;
@@ -34,6 +35,9 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<Object> Register(@RequestBody UserDto.UserRegisterDto data) {
         try {
+            if (userService.checkUser(data.getEmail())) {
+                throw new AlreadyExistException("이미 존재하는 회원입니다.");
+            }
             data.setPwd(passwordEncoder.encode(data.getPwd()));
             data.setToken(jwtProvider.createToken(data.getEmail()));
             return ResponseEntity.ok().body(userService.register(data));

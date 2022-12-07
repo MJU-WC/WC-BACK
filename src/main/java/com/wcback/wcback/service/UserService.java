@@ -27,10 +27,7 @@ public class UserService {
     }
 
     // 회원가입
-    public User register(UserDto.UserRegisterDto userRequest) throws AlreadyExistException {
-        if (checkUser(userRequest.getEmail())) {
-            throw new AlreadyExistException("이미 존재하는 이메일입니다.");
-        }
+    public User register(UserDto.UserRegisterDto userRequest) {
         User user = new User();
         BeanUtils.copyProperties(userRequest, user);
         return userRepository.save(user);
