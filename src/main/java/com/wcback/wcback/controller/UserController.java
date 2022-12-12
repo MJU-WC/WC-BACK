@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
+
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
@@ -80,7 +81,7 @@ public class UserController {
     // 회원탈퇴
     @Transactional
     @DeleteMapping("/withdraw")
-    public ResponseEntity<Object> Withdraw(String token) {
+    public ResponseEntity<Object> Withdraw(@RequestBody String token) {
         String email = getEmailByJwtToken(token);
         userService.deleteUser(email);
         return ResponseEntity.ok().body("탈퇴완료");
@@ -89,7 +90,7 @@ public class UserController {
     // 토큰으로 회원정보 가져오기
     @Transactional
     @PostMapping("/getUser")
-    public ResponseEntity<Object> getUser(String token) {
+    public ResponseEntity<Object> getUser(@RequestBody String token) {
         User user = userService.findUserByEmail(getEmailByJwtToken(token));
         return ResponseEntity.ok().body(user);
     }
@@ -98,15 +99,26 @@ public class UserController {
     @Transactional
     @PostMapping("/getUserByKakaoToken")
     public ResponseEntity<Object> getUserByKakaoToken(@RequestBody String token) {
-        return ResponseEntity.ok().body(oAuthService.getUserInfo(token));
+        return ResponseEntity.ok().body(userService.findUserByEmail(getEmailByKakaoToken(token)));
     }
 
+    // 카카오로그인 시 주소 입력
+    @Transactional
+    @PostMapping("/getKakaoAddress")
+    public ResponseEntity<Object> getKakaoAddress(@RequestBody UserDto.UserRegisterDto userRegisterDto) {
+        String email = getEmailByKakaoToken(userRegisterDto.getToken());
+        String address = userRegisterDto.getAddress();
+        userService.getKakaoAddress(email,address);
+        return ResponseEntity.ok().body("주소 입력 완료");
+    }
     public String getEmailByJwtToken(String token) {
+        System.out.println(token);
         return jwtProvider.getPayload(token);
     }
 
     public String getEmailByKakaoToken(String token) {
         return oAuthService.getUserInfo(token).get("email").toString();
     }
+
 }
 

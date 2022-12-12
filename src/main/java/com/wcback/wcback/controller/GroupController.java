@@ -23,7 +23,7 @@ public class GroupController {
     // 그룹 조회
     @Transactional
     @GetMapping
-    public ResponseEntity<Object> getGroup(@RequestParam String groupid){
+    public ResponseEntity<Object> getGroup(@RequestParam String groupid) {
         try {
             if (!groupService.checkGroup(groupid)) {
                 throw new AlreadyExistException("존재하지 않는 그룹입니다.");
@@ -64,7 +64,7 @@ public class GroupController {
     @Transactional
     @DeleteMapping("/groupOut")
     public ResponseEntity<Object> GroupOut(@RequestParam String groupName, String email) {
-        groupService.groupOut(groupName,email);
+        groupService.groupOut(groupName, email);
         return ResponseEntity.ok().body("탈퇴 완료");
     }
 
@@ -72,10 +72,22 @@ public class GroupController {
     @Transactional
     @PostMapping("/getGroupsContainUser")
     public ResponseEntity<Object> getGroupsContainUser(@RequestBody GroupDto.GroupFindiDto groupFindDto) {
-        String email = (groupFindDto.isKakao())
-                ? oAuthService.getUserInfo(groupFindDto.getToken()).get("email").toString()
-                : jwtProvider.getPayload(groupFindDto.getToken());
+        String email = getEmailByAnyToken(groupFindDto.getToken(), groupFindDto.isKakao());
         return ResponseEntity.ok().body(groupService.findGroupsContainUser(email));
+    }
+
+    // 유저가 속한 그룹별로 Schedule반환하기
+    @Transactional
+    @PostMapping("/getAllGroupSchedule")
+    public ResponseEntity<Object> getAllGroupSchedule(@RequestBody GroupDto.GroupFindiDto groupFindDto) {
+        String email = getEmailByAnyToken(groupFindDto.getToken(), groupFindDto.isKakao());
+        return ResponseEntity.ok().body(groupService.findGroupSchedule(email));
+    }
+
+    public String getEmailByAnyToken(String token, boolean isKakao) {
+        return (isKakao)
+                ? oAuthService.getUserInfo(token).get("email").toString()
+                : jwtProvider.getPayload(token);
     }
 }
 

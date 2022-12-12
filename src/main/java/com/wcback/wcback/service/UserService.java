@@ -52,5 +52,9 @@ public class UserService {
         userRepository.deleteByEmail(email);
     }
 
-
+    public void getKakaoAddress(String email, String address) {
+        User user = userRepository.findByEmail(email).get();
+        user.setAddress(address);
+        userRepository.save(user);
+    }
 }

@@ -38,6 +38,7 @@ public class JwtProvider {
     }
 
     public String getPayload(String token) {
+        System.out.println(token);
         String[] chunks = token.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String header = new String(decoder.decode(chunks[0]));

@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -48,6 +50,8 @@ public class OAuthConroller {
             }
         }
 
+
+
         // 로그인 처리
         User loginUser = userService.findUserByEmail(email);
         String JwtToken = jwtProvider.createToken(email);
@@ -58,11 +62,13 @@ public class OAuthConroller {
         userInfoDto.setToken(token);
         System.out.println(userInfoDto);
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("http://localhost:63342/frontend/HTML/main.html"));
+        headers.setLocation(URI.create("http://localhost:63342/frontend-2/kakaoaddress.html"));
         headers.set("kakao-token",token);
         Cookie cookie = new Cookie("kakao-token", token);
         cookie.setPath("/");
         response.addCookie(cookie);
         return ResponseEntity.status(HttpStatus.SEE_OTHER).headers(headers).build();
     };
+
+
 }
